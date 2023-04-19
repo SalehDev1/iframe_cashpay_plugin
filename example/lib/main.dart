@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:iframe_cashpay_plugin/iFrameCashPay.dart';
+import 'package:iframe_cashpay_plugin/iframe_cashpay_plugin.dart';
 
 void main() {
   runApp(PayMaterialApp());
@@ -34,8 +34,7 @@ class _PaySampleAppState extends State<PaySampleApp> {
   String desc = "";
   //Token returned from Response login
   //Documentation https://documenter.getpostman.com/view/17550185/2s93XzwN9o
-  String token =
-      "TFBVaHAwQWoydjNabXdpMXlRTGxXSytncE9rTWdocFk5c1JndHpKVTdiODNYelAiLCJNU0lTRE4iOiJNYXplbi5jby50c3QiLCJuYmYiOjE2ODE4NDc5MTQsImV4cCI6MTY4MTg1MDkxNCwiaWF0IjoxNjgxODQ3OTE0LCJpc3MiOiJodHRwczovL3d3dy50YW1rZWVuLmNvbS55ZS9DYXNoIiwiYXVkIjoiaHR0cDovL3d3dy50YW1rZWVuLmNvbS55ZS9DYXNoIn0.7DnKT2dzKlVPOEkweNizvy-JimsfTayiBCpedCIFZzY";
+  String token = "";
 
   @override
   Widget build(BuildContext context) {

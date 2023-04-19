@@ -5,10 +5,10 @@ import 'dart:async';
 // const kAndroidUserAgent =
 //     'Mozilla/5.0 (Linux; Android 10.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
-class BottomSheetIframeCashPay extends StatefulWidget {
+class iFrameCashPay extends StatefulWidget {
   String iframeURL;
   final JavascriptMessageHandler onConfirmPayment;
-  BottomSheetIframeCashPay(
+  iFrameCashPay(
       {Key? key, required this.iframeURL, required this.onConfirmPayment})
       : super(key: key);
 
@@ -17,7 +17,7 @@ class BottomSheetIframeCashPay extends StatefulWidget {
       _MyHomePageState(iframeURL, onConfirmPayment);
 }
 
-class _MyHomePageState extends State<BottomSheetIframeCashPay> {
+class _MyHomePageState extends State<iFrameCashPay> {
   String? iframeURL;
   final JavascriptMessageHandler? onConfirmPayment;
   _MyHomePageState(this.iframeURL, this.onConfirmPayment);
