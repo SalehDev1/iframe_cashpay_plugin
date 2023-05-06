@@ -5,23 +5,24 @@ import 'dart:async';
 // const kAndroidUserAgent =
 //     'Mozilla/5.0 (Linux; Android 10.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
-class iFrameCashPay extends StatefulWidget {
-  String iframeURL;
+class IframeCashPay extends StatefulWidget {
+  final String iframeURL;
   final JavascriptMessageHandler onConfirmPayment;
-  iFrameCashPay(
-      {Key? key, required this.iframeURL, required this.onConfirmPayment})
+  final JavascriptMessageHandler onCancel;
+  final JavascriptMessageHandler onError;
+  const IframeCashPay(
+      {Key? key,
+      required this.iframeURL,
+      required this.onConfirmPayment,
+      required this.onCancel,
+      required this.onError})
       : super(key: key);
 
   @override
-  _MyHomePageState createState() =>
-      _MyHomePageState(iframeURL, onConfirmPayment);
+  State<IframeCashPay> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<iFrameCashPay> {
-  String? iframeURL;
-  final JavascriptMessageHandler? onConfirmPayment;
-  _MyHomePageState(this.iframeURL, this.onConfirmPayment);
-
+class _MyHomePageState extends State<IframeCashPay> {
   final flutterWebViewPlugin = FlutterWebviewPlugin();
 
   // On destroy stream
@@ -29,8 +30,6 @@ class _MyHomePageState extends State<iFrameCashPay> {
 
   // On urlChanged stream
   late StreamSubscription<String> _onUrlChanged;
-
-  late StreamSubscription<String> _CHANNEL_NAME;
 
   // On urlChanged stream
   late StreamSubscription<WebViewStateChanged> _onStateChanged;
@@ -43,21 +42,12 @@ class _MyHomePageState extends State<iFrameCashPay> {
 
   late StreamSubscription<double> _onScrollXChanged;
 
-  final _urlCtrl = TextEditingController(text: "iframeURL");
-
-  final _codeCtrl = TextEditingController(text: 'window.navigator.userAgent');
-
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final _history = [];
 
   @override
   void initState() {
     super.initState();
     flutterWebViewPlugin.close();
-    _urlCtrl.addListener(() {
-      iframeURL = _urlCtrl.text;
-    });
 
     // Add a listener to on destroy WebView, so you can make came actions.
     _onDestroy = flutterWebViewPlugin.onDestroy.listen((_) {
@@ -123,12 +113,21 @@ class _MyHomePageState extends State<iFrameCashPay> {
     });
   }
 
+  onMessage(JavascriptMessage message) {
+    if (message.message == "Confirmation" || message.message == "NEEDTOCHECK") {
+      widget.onConfirmPayment(message);
+    } else if (message.message == "Cancel") {
+      widget.onCancel(message);
+    } else if (message.message == "Error") {
+      widget.onError(message);
+    }
+  }
+
   @override
   void dispose() {
     // Every listener should be canceled, the same should be done with this stream.
     _onDestroy.cancel();
     _onUrlChanged.cancel();
-    _CHANNEL_NAME.cancel();
     _onStateChanged.cancel();
     _onHttpError.cancel();
     _onProgressChanged.cancel();
@@ -142,15 +141,14 @@ class _MyHomePageState extends State<iFrameCashPay> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: WebviewScaffold(
-        url: iframeURL!,
+        url: widget.iframeURL,
         ignoreSSLErrors: true,
         javascriptChannels: {
-          JavascriptChannel(
-              name: 'flutter', onMessageReceived: onConfirmPayment!)
+          JavascriptChannel(name: 'flutter', onMessageReceived: onMessage)
         },
         withLocalStorage: true,
         appCacheEnabled: false,
-        // resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: true,
         initialChild: Container(
           color: Colors.white,
           child: const Center(
